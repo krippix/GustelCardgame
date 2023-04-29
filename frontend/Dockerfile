@@ -1,6 +1,4 @@
 FROM nginx
 
-#WORKDIR /cardgame/
-
 COPY ./cardgame /usr/share/nginx/html/
-COPY ./nginx.conf ./nginx.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
