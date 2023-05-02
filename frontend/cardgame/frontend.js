@@ -30,7 +30,7 @@ function get_cookie(name){
 
 async function set_username(){
     var inputText = document.getElementById("input-field").value;
-    document.cookie = "username=" + inputText
+    document.cookie = "name=" + inputText
     let response = await fetch(url+"username/",{
         method: "POST",
         headers: {
