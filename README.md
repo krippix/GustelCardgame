@@ -8,4 +8,8 @@
 
 ### Backend
 
-`uvicorn main:app --reload`
+Starts with a regular python command
+
+## Docs
+
+<http://localhost/docs>

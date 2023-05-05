@@ -1,7 +1,11 @@
 # external
 # python native
-import os, base64
+import pathlib
 # project
+
+
+def get_root() -> pathlib.Path:
+    return pathlib.Path(__file__).parent.parent
 
 
 def validate_username(name: str):
@@ -27,15 +31,11 @@ def validate_username(name: str):
         raise UsernameError(error)
 
 
-def generate_key() -> str:
-    """Generates key for users to authenticate themselves
-
-    Returns:
-        key
-    """
-    random_bytes = os.urandom(64)
-    key = base64.b64encode(random_bytes).decode('utf-8')
-    return key
-
 class UsernameError(Exception):
     pass
+
+
+if __name__ == "__main__":
+    pass
+    #generate_key()
+    #print(key_exists("testing"))

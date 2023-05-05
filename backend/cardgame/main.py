@@ -3,11 +3,13 @@ import uvicorn
 import pydantic
 import fastapi
 import fastapi.middleware.cors
+import fastapi.security.api_key
 # python native
 import logging
 # project
 import util.func
 import util.config
+import auth
 
 
 app = fastapi.FastAPI()
@@ -23,16 +25,30 @@ app.add_middleware(
 
 # ------ basemodels ------
 
+class Key(pydantic.BaseModel):
+    key: str
+
+
 class User(pydantic.BaseModel):
     name: str
-    key: str
+    key: Key
 
 
 # ------ locations ------
 
-@app.get("/")
-async def test_get():
-    return {"key" : "value"}
+@app.get("/key/")
+async def get_key():
+    """Gets new key for a new user
+    Returns:
+        {key:value}    
+    """
+    key = auth.generate_key()
+    return {"key" : key}
+
+
+@app.get("/test/", dependencies=[fastapi.Depends(auth.check_api_key)])
+async def test_con():
+    return {"amogus":"wurstbrot"}
 
 
 @app.post("/username/")
@@ -52,8 +68,8 @@ async def post_test(user: User):
         return {"valid": False, "key": None, "msg": str(e)}
 
     # Check if a key has been provided
-    if user.key is None or not util.func.key_exists(user.key):
-        user.key = util.func.generate_key()
+    if user.key is None or not auth.key_exists(user.key):
+        user.key = auth.generate_key()
 
     return {"valid": True, "key": user.key, "msg": None}
 

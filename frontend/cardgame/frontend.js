@@ -37,7 +37,7 @@ async function set_username(){
             'Content-Type': "application/json",
             'Accept': 'application/json'
         },
-        body: JSON.stringify({name:inputText})
+        body: JSON.stringify({name:inputText,key:""})
     })
     console.log(await response.json());
 }
