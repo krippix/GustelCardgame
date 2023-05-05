@@ -4,7 +4,7 @@ const url = "http://127.0.0.1:8000/"
 // script
 let username = get_cookie("username")
 if (!!username){
-    document.getElementById("input-field").value = username;
+    document.getElementById("username-input").value = username;
 }
 
 
@@ -28,9 +28,18 @@ function get_cookie(name){
 }
 
 
-async function set_username(){
-    var inputText = document.getElementById("input-field").value;
-    document.cookie = "name=" + inputText
+async function login(){
+    var inputText = document.getElementById("username-input").value;
+    document.cookie = "username=" + inputText
+    
+    // check if key can be provided
+    let key = get_cookie("key")
+    if (!key) {
+        response = await fetch(url+"key/",{method: "GET"});
+        let key2 = await response.json();
+    }
+    console.log(key2);
+    
     let response = await fetch(url+"username/",{
         method: "POST",
         headers: {
