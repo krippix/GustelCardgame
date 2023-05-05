@@ -12,4 +12,4 @@ Starts with a regular python command
 
 ## Docs
 
-<http://localhost/docs>
+<http://localhost:8000/docs>
