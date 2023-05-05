@@ -1,32 +1,38 @@
 /* Center the button and input field in the middle of the page */
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
   
-  /* Style the label */
-  label {
-    margin-right: 1rem;
-  }
+/* Style the label */
+label {
+  margin-right: 1rem;
+}
   
-  /* Style the input field */
-  input[type="text"] {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border-radius: 0.25rem;
-    border: 1px solid #ccc;
-  }
-  
-  /* Style the button */
-  button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    border-radius: 0.25rem;
-    background-color: #0077cc;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
+/* Style the input field */
+input[type="text"] {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ccc;
+}
+
+/* Style the button */
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  background-color: #0077cc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.error {
+  position: relative;
+  color: red;
+  display: none;
+}

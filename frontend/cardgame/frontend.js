@@ -1,21 +1,20 @@
 // index page js
 const url = "http://127.0.0.1:8000/"
 
-// script
+// ----- on site load -----
 let username = get_cookie("username")
 if (!!username){
     document.getElementById("username-input").value = username;
 }
 
-
-async function get_test(){
-    let response = await fetch(url,{method: "GET"});
-    let data = await response.json();
-    console.log(data);
-}
+// ----- actions -----
+document
 
 
-// cookies are ; seperated string
+
+// ------ functions -----
+
+
 function get_cookie(name){
     var cookieArr = document.cookie.split(";");
     for (var i = 0; i < cookieArr.length; i++) {
@@ -28,29 +27,73 @@ function get_cookie(name){
 }
 
 
-async function login(){
-    var inputText = document.getElementById("username-input").value;
-    document.cookie = "username=" + inputText
-    
-    // check if key can be provided
-    let key = get_cookie("key")
-    if (!key) {
-        response = await fetch(url+"key/",{method: "GET"});
-        let key2 = await response.json();
+async function login(retry = 0){
+    // re-hide error
+    document.getElementById("username-error").style.display = "none";
+    if (retry >= 2){
+        console.log("Failed to connect.");
+        return;
     }
-    console.log(key2);
+
+    let inputText = document.getElementById("username-input").value;
+    let key = get_cookie("key");
+
+    // save provided username to cookie TODO: Provide date for expiry
+    document.cookie = "username=" + inputText;
     
+    // attempt connection, fetch key if needed
     let response = await fetch(url+"username/",{
         method: "POST",
         headers: {
-            'Content-Type': "application/json",
-            'Accept': 'application/json'
+            'accept': 'application/json',
+            'key': key,
+            'content-type': "application/json"
         },
-        body: JSON.stringify({name:inputText,key:""})
-    })
-    console.log(await response.json());
+        body: JSON.stringify({"name":inputText,"key":key})
+    });
+    
+    switch (response.status) {
+        case 200:
+            console.log("Success!");
+            break;
+        case 401:
+        case 403:
+            await get_key();
+            login(retry + 1);
+            break;
+        default:
+            login_error("Unknown error occured, maybe the server is down. Code "+response.status);
+    }
+
+    // now handle if the username is incorrect
+    %TODO
 }
 
+
+/**
+ * Sets error message below the username field
+ * @param {string} msg 
+ */
+function login_error(msg){
+    let errorbox = document.getElementById("username-error");
+    errorbox.innerText = msg;
+    errorbox.style.display = "block";
+}
+
+
+/**
+ * Requests key from the API, saves it into cookies
+ * @returns string of the new key
+ */
+async function get_key(){
+    let response = await fetch(url+"key/", {method:"GET"});
+    let data = await response.json();
+    key = data.key;
+    console.log("new key: "+key);
+    document.cookie = "key=" + key;
+    return "";
+
+}
 
 function validate_username(name){
     if (length(name) >= 3 || length(name) <= 20){

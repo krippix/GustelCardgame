@@ -2,7 +2,7 @@
 import fastapi
 import fastapi.security.api_key
 # python native
-import os, pathlib, base64
+import os, pathlib, secrets
 # project
 import util.func as func
 
@@ -24,8 +24,7 @@ def generate_key() -> str:
     pathlib.Path(datafolder).mkdir(parents=True, exist_ok=True)
     
     # generate the key
-    random_bytes = os.urandom(16)
-    key = base64.b64encode(random_bytes).decode('utf-8')
+    key = secrets.token_urlsafe(16)
 
     # check if the key exists already (this should be impossible)
     if key_exists(key):
@@ -45,7 +44,7 @@ def key_exists(key: str) -> bool:
     Returns:
         bool
     """
-    if len(key) != 24:
+    if len(key) != 22:
         return False
 
     keyfile = func.get_root().joinpath(f"data{os.sep}keys.txt")
@@ -58,6 +57,7 @@ def key_exists(key: str) -> bool:
         for line in keyfile:
             if line.strip() == key:
                 return True
+    print("no matching key found??")
     return False
 
 
@@ -73,7 +73,7 @@ def check_api_key(key: str = fastapi.Depends(key_header)):
             status_code=fastapi.status.HTTP_401_UNAUTHORIZED,
             detail="Forbidden"
         )
-    return
+    return key
 
 
 if __name__ == "__main__":

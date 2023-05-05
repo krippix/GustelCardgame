@@ -29,9 +29,8 @@ class Key(pydantic.BaseModel):
     key: str
 
 
-class User(pydantic.BaseModel):
+class Username(pydantic.BaseModel):
     name: str
-    key: Key
 
 
 # ------ locations ------
@@ -52,26 +51,22 @@ async def test_con():
 
 
 @app.post("/username/")
-async def post_test(user: User):
+async def post_test(user: Username, key: str = fastapi.Depends(auth.check_api_key)):
     """Recieves username, evaluates and replies with key or error.
+    Username must be between 3 and 20 characters.
     Args:
         amogus: _description_
     Returns:
         {"valid": bool, "key": str, "msg": str}
     """
-    print(f"recieved name: {user.name}")
+    print(f"recieved name: {user.name} for key: {key}")
 
     # Check if username is acceptable
     try:
         util.func.validate_username(user.name)
     except util.func.UsernameError as e:
-        return {"valid": False, "key": None, "msg": str(e)}
-
-    # Check if a key has been provided
-    if user.key is None or not auth.key_exists(user.key):
-        user.key = auth.generate_key()
-
-    return {"valid": True, "key": user.key, "msg": None}
+        return {"valid": False, "error": str(e)}
+    return {"valid": True, "error": None}
 
 
 if __name__ == "__main__":
